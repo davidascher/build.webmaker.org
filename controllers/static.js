@@ -35,8 +35,18 @@ exports.product = function(req, res) {
   res.redirect('https://github.com/MozillaFoundation/plan/issues/187');
 };
 
+/**
+ * "Design assets" route handler.
+ *
+ * @param  {object} req Request
+ * @param  {object} res Response
+ *
+ * @return {void}
+ */
 exports.design = function(req, res) {
-  res.redirect('https://github.com/MozillaFoundation/Mofo-Design-Handbook');
+  res.render('assets', {
+      title: 'Design Assets'
+  });
 };
 
 exports.engineering = function(req, res) {

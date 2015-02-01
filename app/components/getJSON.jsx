@@ -1,19 +1,28 @@
 var getJSON = function(url, successHandler, errorHandler) {
-  var xhr = typeof XMLHttpRequest != 'undefined'
-    ? new XMLHttpRequest()
-    : new ActiveXObject('Microsoft.XMLHTTP');
+  var xhr = typeof XMLHttpRequest !== 'undefined' ?
+    new XMLHttpRequest() :
+    new ActiveXObject('Microsoft.XMLHTTP');
   xhr.open('get', url, true);
   xhr.onreadystatechange = function() {
     var status;
     var data;
-    // http://xhr.spec.whatwg.org/#dom-xmlhttprequest-readystate
-    if (xhr.readyState == 4) { // `DONE`
+    console.log("IN JSON CB", data);
+    /* See http://xhr.spec.whatwg.org/#dom-xmlhttprequest-readystate */
+    if (xhr.readyState === 4) { /* `DONE` */
       status = xhr.status;
-      if (status == 200) {
+      if (status === 200) {
         data = JSON.parse(xhr.responseText);
-        successHandler && successHandler(data);
+        if (successHandler) {
+          successHandler(data);
+        }
+      } else if (status == 302) {
+          // data.redirect contains the string URL to redirect to
+          data = JSON.parse(xhr.responseText);
+          window.location.href = data.redirect;
       } else {
-        errorHandler && errorHandler(status);
+        if (errorHandler) {
+          errorHandler(status);
+        }
       }
     }
   };

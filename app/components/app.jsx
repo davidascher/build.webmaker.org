@@ -2,11 +2,11 @@ var React = require("react");
 var Router = require("react-router");
 var { Route, RouteHandler, Link, DefaultRoute } = Router;
 var auth = require("./auth.jsx");
-var { AuthBlock, Login, Logout } = auth;
+var { AuthBlock } = auth;
 var getJSON = require("./getJSON.jsx");
 // XXX get it from a config file in the Gulp file?
-var APIServer = "http://1c75f1df.ngrok.com";
-
+// var APIServer = "http://1c75f1df.ngrok.com";
+var APIServer = ""
 var App = React.createClass({
     getInitialState: function() {
       return {
@@ -22,13 +22,17 @@ var App = React.createClass({
             <li>&nbsp;</li>
             <li className="icon-add"><Link to="add">Add Project</Link></li>
             <li className="icon-now"><Link to="now">This Heartbeat</Link></li>
-            <li className="icon-next"><Link to="next">Next Heartbeat</Link></li>
-            <li className="icon-upcoming"><Link to="upcoming">Upcoming</Link></li>
+            <li className="icon-next">
+              <Link to="next">Next Heartbeat</Link>
+            </li>
+            <li className="icon-upcoming">
+              <Link to="upcoming">Upcoming</Link>
+            </li>
             <li>&nbsp;</li>
             <li className="icon-strategy">
             <a href="https://wiki.mozilla.org/Webmaker/2015">Strategy</a></li>
             <li className="icon-dashbsoard">
-  <a href="https://mozillafoundation.geckoboard.com/dashboards/F62088172D822E2A">
+<a href="https://mozillafoundation.geckoboard.com/dashboards/F62088172D822E2A">
             Dashboard</a></li>
             <li>&nbsp;</li>
             <li className="icon-how">How We Work</li>
@@ -75,7 +79,7 @@ var Add = React.createClass({
             <form method="POST">
               <div className="question">
                 <h2>Give your project a title.</h2>
-                <p>In as few words as possible, describe what 
+                <p>In as few words as possible, describe what
                 this project is about.</p>
                 <textarea name="title" rows="2"></textarea>
               </div>
@@ -133,7 +137,7 @@ var Labels = React.createClass({
   render: function() {
     var labels = this.props.labels.map( function(label) {
       var style = { backgroundColor: String(label.color),
-                   color: (parseInt(label.color, 16) > 0xffffff / 2) 
+                   color: (parseInt(label.color, 16) > 0xffffff / 2)
                    ? "0a3931" : "white"
       };
       return <li key={label.name} style={style}>{label.name}</li>;
@@ -144,21 +148,27 @@ var Labels = React.createClass({
       </ul>
     );
   }
-})
+});
 
 var Issue = React.createClass({
   getInitialState: function() {
-    return {}
+    return {};
   },
   render: function() {
     var data = this.props.data;
-    if (!data) return <div/>;
+    if (!data) {
+      return <div/>;
+    }
     var contrastColor = "white";
     var lines = data.body.split("\n");
     var trimmedBody = lines[0];
     var Img = data.assignee ?
-      <img src={data.assignee.avatar_url} title="Assigned to" alt={data.assignee.login}/> :
-      <img src={data.user.avatar_url} title="Created by" alt={data.user.login}/>
+      <img src={data.assignee.avatar_url} 
+           title="Assigned to" 
+           alt={data.assignee.login}/> :
+      <img src={data.user.avatar_url} 
+           title="Created by" 
+           alt={data.user.login}/>;
     return (
       <li className="clearfix">
           <a href={data.html_url} target="_blank">
@@ -168,16 +178,16 @@ var Issue = React.createClass({
           </a>
           <Labels labels={data.labels}/>
       </li>
-    )
+    );
   }
-})
+});
 
 var IssuesList = React.createClass({
   getInitialState: function() {
     return { "issues": [] };
   },
   render: function() {
-    var issues = this.props.issues.map(function(issue) {
+    var issues = this.props.issues.map( function(issue) {
       return <Issue key={issue.id} data={issue}/>;
     });
     return (
@@ -186,7 +196,7 @@ var IssuesList = React.createClass({
       </ul>
     );
   }
-})
+});
 
 var Heartbeat = React.createClass({
   getInitialState: function() {
@@ -196,13 +206,13 @@ var Heartbeat = React.createClass({
     };
   },
   componentDidMount: function() {
-    var comp = this;
-    getJSON(APIServer + "/" + comp.props.path, 
+    var self = this;
+    getJSON(APIServer + "/" + self.props.path,
       function(data) {
-        if (comp.isMounted()) {
-          comp.setState({p1:data.issues.p1, p2:data.issues.p2})
+        if (self.isMounted()) {
+          self.setState({ p1:data.issues.p1, p2:data.issues.p2 });
         }
-      }, 
+      },
       function(err) {
       }
     );
@@ -230,12 +240,12 @@ var Heartbeat = React.createClass({
 
 var Now = React.createClass({
   render: function() {
-    return <Heartbeat path="now" title="Current Heartbeat"/>
+    return <Heartbeat path="now" title="Current Heartbeat"/>;
   }
 });
 var Next = React.createClass({
   render: function() {
-    return <Heartbeat path="next" title="Next Heartbeat"/>
+    return <Heartbeat path="next" title="Next Heartbeat"/>;
   }
 });
 
@@ -254,31 +264,31 @@ var IssueCard = React.createClass({
               <Labels labels={data.labels}/>
           </a>
       </li>
-      )
+      );
   }
 });
 
 var Upcoming = React.createClass({
   getInitialState: function() {
     return {
-      milestones: [],
+      milestones: []
     };
   },
   componentDidMount: function() {
-    var comp = this;
-    getJSON(APIServer + "/upcoming", 
+    var self = this;
+    getJSON(APIServer + "/upcoming",
       function(data) {
-        if (comp.isMounted()) {
-          comp.setState({milestones:data.milestones})
+        if (self.isMounted()) {
+          self.setState({ milestones:data.milestones });
         }
-      }, 
+      },
       function(err) {
       }
     );
   },
   render: function() {
-    var milestones = this.state.milestones.map(function(milestone) {
-      var issueCards = milestone.issues.map(function(issue) {
+    var milestones = this.state.milestones.map( function(milestone) {
+      var issueCards = milestone.issues.map( function(issue) {
         return <IssueCard key={issue.id} data={issue}/>;
       });
       return (<div key={milestone.id}>
@@ -287,8 +297,8 @@ var Upcoming = React.createClass({
           {issueCards}
         </ul>
         </div>
-        )
-    })
+      );
+    });
 
     return (
       <div>
@@ -311,42 +321,44 @@ var Splash = React.createClass({
   render: function() {
     return (
       <div id="splash">
-          <div className="masthead">
-              <div className="wrap">
-                  <h1>Let's Build Webmaker Together</h1>
+        <div className="masthead">
+          <div className="wrap">
+            <h1>Let's Build Webmaker Together</h1>
 
-                  <div className="center">
-                      <Link className="button btn-white" to="add">Add Project</Link>
-                      <Link className="button btn-white" to="now">This Heartbeat</Link>
-                  </div>
-              </div>
+            <div className="center">
+              <Link className="button btn-white" 
+                    to="add">Add Project</Link>
+              <Link className="button btn-white" 
+                    to="now">This Heartbeat</Link>
+            </div>
           </div>
+        </div>
 
-          <div className="copy">
-              <div className="wrap">
-                  <div className="center">
-                      <h4>Our Mission</h4>
-                  </div>
+        <div className="copy">
+          <div className="wrap">
+            <div className="center">
+              <h4>Our Mission</h4>
+            </div>
 
-                  <div className="columns">
-                      <p>The Mozilla Foundation is a non-profit organization 
-                      that promotes openness, innovation and participation on
-                      the Internet. We promote the values of an open Internet
-                      to the broader world.</p>
-                      <p>Mozilla is best known for the Firefox browser, but we
-                      advance our mission through other software projects, grants
-                      and engagement and education efforts such as Mozilla Webmaker.</p>
-                      <p>Webmaker is all about building a new generation of
-                      digital creators and webmakers, giving people the tools
-                      and skills they need to move from using the web to actively
-                      making the web.</p>
-                      <p>If you're interested in supporting our efforts, please
-                      consider getting involved with Mozilla Webmaker, making 
-                      a donation or getting involved with the
-                      Mozilla community.</p>
-                  </div>
-              </div>
+            <div className="columns">
+              <p>The Mozilla Foundation is a non-profit organization 
+              that promotes openness, innovation and participation on
+              the Internet. We promote the values of an open Internet
+              to the broader world.</p>
+              <p>Mozilla is best known for the Firefox browser, but we
+              advance our mission through other software projects, grants
+              and engagement and education efforts such as Mozilla Webmaker.</p>
+              <p>Webmaker is all about building a new generation of
+              digital creators and webmakers, giving people the tools
+              and skills they need to move from using the web to actively
+              making the web.</p>
+              <p>If you're interested in supporting our efforts, please
+              consider getting involved with Mozilla Webmaker, making 
+              a donation or getting involved with the
+              Mozilla community.</p>
+            </div>
           </div>
+        </div>
       </div>
     );
   }
@@ -385,8 +397,6 @@ var Design = React.createClass({
 
 var routes = (
   <Route path="/" handler={App}>
-    <Route name="login" handler={Login}/>
-    <Route name="logout" handler={Logout}/>
     <Route name="add" handler={Add}/>
     <Route name="now" handler={Now}/>
     <Route name="next" handler={Next} path="next" title="Next Heartbeat"/>

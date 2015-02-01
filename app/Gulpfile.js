@@ -54,7 +54,7 @@ gulp.task('minify-app', ['bundle-app'], function() {
 
   return gulp.src(cwd + '/build/app.js')
     .pipe(sourcemaps.init())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(cwd + '/public/javascript'));
 });

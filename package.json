@@ -40,6 +40,7 @@
     "makerstrap": "git://github.com/mozilla/makerstrap#v0.2.7",
     "react": "^0.12.2",
     "react-onclickoutside": "^0.2.0",
+    "react-router": "^0.11.6",
     "reactify": "^0.17.1",
     "superagent": "^0.21.0",
     "vinyl-source-stream": "^1.0.0",

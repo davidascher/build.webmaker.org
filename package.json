@@ -38,6 +38,7 @@
     "es6": "0.0.7",
     "express-flash": "0.0.2",
     "express-validator": "^2.8.0",
+    "github-oauth": "^0.2.1",
     "gulp": "^3.8.10",
     "gulp-concat": "^2.4.3",
     "gulp-express": "^0.1.7",
@@ -64,4 +65,3 @@
     "vinyl-transform": "^1.0.0"
   }
 }
-

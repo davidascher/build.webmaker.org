@@ -1,0 +1,7 @@
+language: node_js
+install: gulp build minify-app
+node_js:
+- '0.10'
+script: node server.js
+deploy:
+  provider: heroku

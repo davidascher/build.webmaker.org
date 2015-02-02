@@ -1,10 +1,10 @@
 {
-  "name": "mofo-example-app",
+  "name": "webmaker-build",
   "version": "0.0.1",
-  "description": "The Mozilla Foundation example app upon which mountains can be built.",
+  "description": "Build.webmaker.org",
   "private": true,
   "bugs": {
-    "url": "http://github.com/mozillafoundation/mofo-example-app"
+    "url": "http://github.com/mozillafoundation/build.webmaker.org"
   },
   "license": "MPL-2.0",
   "author": {
@@ -16,8 +16,8 @@
     "url": "http://github.com/mozillafoundation/mofo-example-app"
   },
   "scripts": {
-    "postinstall": "gulp",
-    "test": "gulp test",
+    "postinstall": "gulp build minify-app",
+    "start": "node server.js",
     "build": "gulp"
   },
   "dependencies": {
@@ -59,8 +59,6 @@
     "request": "^2.52.0",
     "superagent": "^0.21.0",
     "vinyl-source-stream": "^1.0.0",
-    "vinyl-transform": "^1.0.0",
-    "webmaker-auth": "1.0.2",
-    "webmaker-login-ux": "git://github.com/mozilla/webmaker-login-ux#master"
+    "vinyl-transform": "^1.0.0"
   }
 }

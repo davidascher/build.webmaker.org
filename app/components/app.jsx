@@ -32,7 +32,7 @@ var App = React.createClass({
             <li>&nbsp;</li>
             <li className="icon-strategy">
             <a href="https://wiki.mozilla.org/Webmaker/2015">Strategy</a></li>
-            <li className="icon-dashbsoard">
+            <li className="icon-dashboard">
 <a href="https://mozillafoundation.geckoboard.com/dashboards/F62088172D822E2A">
             Dashboard</a></li>
             <li>&nbsp;</li>

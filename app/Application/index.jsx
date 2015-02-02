@@ -2,7 +2,7 @@ var React = require("react");
 var StateFromStoreMixin = require("items-store/StateFromStoresMixin");
 var RouteHandler = require("react-router").RouteHandler;
 
-require("./style.css");
+require("../less/style.less");
 
 var Application = React.createClass({
 	mixins: [StateFromStoreMixin],

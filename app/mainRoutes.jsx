@@ -7,12 +7,16 @@ var DefaultRoute = Router.DefaultRoute;
 if(!Object.assign)
 	Object.assign = React.__spread;
 
+var {App, Add, Now, Next, Upcoming, Design, Homepage} = require("./components/app");
+
 // export routes
 module.exports = (
-	<Route name="app" path="/" handler={require("./Application")}>
-		<Route name="some-page" path="/some-page" handler={require("react-proxy!./SomePage")} />
-		<Route name="todolist" path="/:list" handler={require("./TodoList")} />
-		<Route name="todoitem" path="/todo/:item" handler={require("./TodoItem")} />
-		<DefaultRoute name="home" handler={require("./Home")} />
-	</Route>
+  <Route name="app" path="/" handler={App}>
+    <Route name="add" handler={Add}/>
+    <Route name="now" handler={Now}/>
+    <Route name="next" handler={Next} path="next" title="Next Heartbeat"/>
+    <Route name="upcoming" handler={Upcoming}/>
+    <Route name="design" handler={Design}/>
+   <DefaultRoute name="home" handler={Homepage}/>
+  </Route>
 );

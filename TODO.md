@@ -2,6 +2,8 @@
 - [x] current page
 - [x] next page
 - [x] upcoming
-- [ ] auth in, log out
+- [x] auth in, log out
 - [ ] Add page when logged out -> show sign in button
-- [ ] auth in with redirect to place whence i came
+- [ ] make add-form validation work
+- [ ] maker add-form actually work
+- [x] auth in with redirect to place whence i came

@@ -15,7 +15,6 @@ var errorHandler = require('errorhandler');
 
 var sessions = require('client-sessions');
 var flash = require('express-flash');
-var hbs = require('hbs');
 var path = require('path');
 var cors = require('cors');
 var expressValidator = require('express-validator');
@@ -23,12 +22,12 @@ var expressValidator = require('express-validator');
 /**
  * Import API keys from environment
  */
-var secrets = require('./config/secrets');
+var secrets = require('./server/config/secrets');
 
 /**
  * Github handlers
  */
-var Github = require('./models/github');
+var Github = require('./server/models/github');
 var github = new Github(
   secrets.github.clientID,
   secrets.github.clientSecret
@@ -44,19 +43,8 @@ var app = express();
  * Express configuration.
  */
 app.set('port', process.env.PORT || 8080);
-app.set('views', path.join(__dirname, 'views'));
 app.set('github_org', 'MozillaFoundation');
 app.set('github_repo', 'plan');
-app.set('view engine', 'hbs');
-app.set('views', __dirname + '/views');
-
-hbs.registerHelper('getContrast', function (hexcolor) {
-  return (parseInt(hexcolor, 16) > 0xffffff/2) ? '0a3931':'white';
-});
-hbs.registerHelper('trimIssueBody', function (body) {
-  var lines = body.split('\n');
-  return lines[0];
-});
 
 app.use(sessions({
   cookieName: 'session',
@@ -66,7 +54,7 @@ app.use(sessions({
 }));
 app.use(compress());
 app.use(express.static(
-  path.join(__dirname, '../app/public'), { maxAge: 1000 * 3600 * 24 * 365.25 })
+  path.join(__dirname, './app/public'), { maxAge: 1000 * 3600 * 24 * 365.25 })
 );
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -81,7 +69,7 @@ app.use(github.middleware);
  * Controllers (route handlers).
  */
 var routes = {
-  schedule: require('./controllers/schedule')
+  schedule: require('./server/controllers/schedule')
 };
 
 /**
@@ -107,7 +95,6 @@ function oauthCB(req, res, path) {
     loginURI: '/login',
     scope: ''
   });
-  console.log("doing oauthCB wiht a path of:", path)
   oauth.login(req, res);
 }
 
@@ -131,7 +118,6 @@ app.get('/auth/callback/:path', function (req, res) {
     if (err) {
       req.flash('errors', {msg: err});
     } else {
-      console.log("GOT CALLBACK, body=", body);
       req.session.token = body.access_token;
       // Get User information, and send it in a cookie
       github.getUserFromToken(body.access_token, function(err, body) {

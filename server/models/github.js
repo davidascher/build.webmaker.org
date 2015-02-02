@@ -254,6 +254,36 @@ Github.prototype.upcomingMilestones = function(callback) {
   });
 };
 
+Github.prototype.getUserInfo = function(username, callback) {
+  var _this = this;
+
+  // Cache target
+  var url = "https://api.github.com/users/" + username;
+  var copy = _this.cache.get(url);
+  if (typeof copy !== 'undefined') {
+    return callback(null, copy);
+  }
+
+  // Request from API
+  request({
+    method: 'GET',
+    uri: url,
+    headers: {
+      'User-Agent': 'build.webmaker.org',
+      Accept: 'application/vnd.github.v3+json',
+      Authorization: 'token ' + _this.token
+    },
+    json: {}
+  }, function(err, res, body) {
+    console.log(body);
+    if (err) return callback(err);
+
+    // Set cache & return
+    _this.cache.set(url, body);
+    callback(err, body);
+  });
+};
+
 /**
  * Export
  */

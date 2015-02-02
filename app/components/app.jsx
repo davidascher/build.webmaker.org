@@ -1,12 +1,13 @@
 var React = require("react");
 var Router = require("react-router");
 var { Route, RouteHandler, Link, DefaultRoute } = Router;
-var auth = require("./auth.jsx");
-var { AuthBlock } = auth;
+var { AuthBlock, AuthMixin } = require("./auth.jsx");
 var getJSON = require("./getJSON.jsx");
+var MentionsApp = require("./mentions.jsx");
+
 // XXX get it from a config file in the Gulp file?
 // var APIServer = "http://1c75f1df.ngrok.com";
-var APIServer = ""
+var APIServer = "";
 var App = React.createClass({
     getInitialState: function() {
       return {
@@ -86,15 +87,15 @@ var Add = React.createClass({
 
               <div className="question">
                 <h2>What is the problem you are trying to solve?</h2>
-                <p>Describe what’s broken or missing from the 
+                <p>Describe what’s broken or missing from the
                 experience of Webmaker.</p>
                 <textarea name="problem" rows="8"></textarea>
               </div>
 
               <div className="question">
                 <h2>Who are the users you are trying to impact?</h2>
-                <p>Describe who is being affected by the problem 
-                you have described (visitors, teachers, staff, 
+                <p>Describe who is being affected by the problem
+                you have described (visitors, teachers, staff,
                 community).</p>
                 <textarea name="audience" rows="8"></textarea>
               </div>
@@ -123,7 +124,7 @@ var Add = React.createClass({
                 <textarea name="measurement" rows="8"></textarea>
               </div>
 
-              <button className="button" type="submit">Submit 
+              <button className="button" type="submit">Submit
                 Project</button>
             </form>
           </div>
@@ -137,8 +138,8 @@ var Labels = React.createClass({
   render: function() {
     var labels = this.props.labels.map( function(label) {
       var style = { backgroundColor: String(label.color),
-                   color: (parseInt(label.color, 16) > 0xffffff / 2)
-                   ? "0a3931" : "white"
+                   color: (parseInt(label.color, 16) > 0xffffff / 2) ?
+                   "0a3931" : "white"
       };
       return <li key={label.name} style={style}>{label.name}</li>;
     });
@@ -159,15 +160,14 @@ var Issue = React.createClass({
     if (!data) {
       return <div/>;
     }
-    var contrastColor = "white";
     var lines = data.body.split("\n");
     var trimmedBody = lines[0];
     var Img = data.assignee ?
-      <img src={data.assignee.avatar_url} 
-           title="Assigned to" 
+      <img src={data.assignee.avatar_url}
+           title="Assigned to"
            alt={data.assignee.login}/> :
-      <img src={data.user.avatar_url} 
-           title="Created by" 
+      <img src={data.user.avatar_url}
+           title="Created by"
            alt={data.user.login}/>;
     return (
       <li className="clearfix">
@@ -317,6 +317,23 @@ var Upcoming = React.createClass({
 });
 
 
+var Dashboard = React.createClass({
+  mixins: [AuthMixin],
+  render: function() {
+    return (
+      <div id="dashboard">
+        <div className="header">
+          <h2>Dashboard for {this.state.details.name}</h2>
+          <AuthBlock/>
+        </div>
+        <div className="main">
+          <MentionsApp handle="davidascher"/>
+        </div>
+      </div>
+    );
+  }
+});
+
 var Splash = React.createClass({
   render: function() {
     return (
@@ -326,9 +343,9 @@ var Splash = React.createClass({
             <h1>Let's Build Webmaker Together</h1>
 
             <div className="center">
-              <Link className="button btn-white" 
+              <Link className="button btn-white"
                     to="add">Add Project</Link>
-              <Link className="button btn-white" 
+              <Link className="button btn-white"
                     to="now">This Heartbeat</Link>
             </div>
           </div>
@@ -341,7 +358,7 @@ var Splash = React.createClass({
             </div>
 
             <div className="columns">
-              <p>The Mozilla Foundation is a non-profit organization 
+              <p>The Mozilla Foundation is a non-profit organization
               that promotes openness, innovation and participation on
               the Internet. We promote the values of an open Internet
               to the broader world.</p>
@@ -353,7 +370,7 @@ var Splash = React.createClass({
               and skills they need to move from using the web to actively
               making the web.</p>
               <p>If you're interested in supporting our efforts, please
-              consider getting involved with Mozilla Webmaker, making 
+              consider getting involved with Mozilla Webmaker, making
               a donation or getting involved with the
               Mozilla community.</p>
             </div>
@@ -364,6 +381,17 @@ var Splash = React.createClass({
   }
 });
 
+
+var Homepage = React.createClass({
+  mixins: [AuthMixin],
+  render: function() {
+    if (this.state.loggedIn) {
+      return <Dashboard/>;
+    } else {
+      return <Splash/>;
+    }
+  }
+});
 
 var Design = React.createClass({
   render: function() {
@@ -402,7 +430,7 @@ var routes = (
     <Route name="next" handler={Next} path="next" title="Next Heartbeat"/>
     <Route name="upcoming" handler={Upcoming}/>
     <Route name="design" handler={Design}/>
-    <DefaultRoute handler={Splash}/>
+    <DefaultRoute handler={Homepage}/>
   </Route>
 );
 

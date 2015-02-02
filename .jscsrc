@@ -25,7 +25,7 @@
   "disallowYodaConditions": true,
   "maximumLineLength": 80,
   "requireBlocksOnNewline": 1,
-  "requireCamelCaseOrUpperCaseIdentifiers": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": false,
   "requireCapitalizedComments": true,
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
@@ -61,5 +61,5 @@
   "validateIndentation" : 2,
   "validateLineBreaks": "LF",
   "validateParameterSeparator": ", ",
-  "validateQuoteMarks": true
+  "validateQuoteMarks": false
 }

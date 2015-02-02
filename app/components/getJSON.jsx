@@ -1,8 +1,8 @@
 var getJSON = function(url, successHandler, errorHandler) {
-  var xhr = typeof XMLHttpRequest !== 'undefined' ?
+  var xhr = typeof XMLHttpRequest !== "undefined" ?
     new XMLHttpRequest() :
-    new ActiveXObject('Microsoft.XMLHTTP');
-  xhr.open('get', url, true);
+    new ActiveXObject("Microsoft.XMLHTTP");
+  xhr.open("get", url, true);
   xhr.onreadystatechange = function() {
     var status;
     var data;
@@ -15,10 +15,10 @@ var getJSON = function(url, successHandler, errorHandler) {
         if (successHandler) {
           successHandler(data);
         }
-      } else if (status == 302) {
-          // data.redirect contains the string URL to redirect to
-          data = JSON.parse(xhr.responseText);
-          window.location.href = data.redirect;
+      } else if (status === 302) {
+        // X data.redirect contains the string URL to redirect to
+        data = JSON.parse(xhr.responseText);
+        window.location.href = data.redirect;
       } else {
         if (errorHandler) {
           errorHandler(status);

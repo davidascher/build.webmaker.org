@@ -39,7 +39,7 @@ gulp.task('bundle-app', function() {
   return browserify(cwd + '/components/app.jsx')
     .transform(to5ify)
     .transform(reactify)
-     //.transform(donottouch)
+    // .transform(donottouch)
     .bundle()
     .pipe(source('app.js'))
     .pipe(gulp.dest(cwd + '/build/'));
@@ -54,7 +54,7 @@ gulp.task('minify-app', ['bundle-app'], function() {
 
   return gulp.src(cwd + '/build/app.js')
     .pipe(sourcemaps.init())
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(cwd + '/public/javascript'));
 });
@@ -112,7 +112,7 @@ gulp.task('less-app', function() {
  * files to be written before we move on to the next task,
  * because in this case we can't run parallel tasks.
  */
-gulp.task('app', ['lint-app', 'jscs-app', 'minify-app', 'less-app']);
+gulp.task('app', ['lint-app', /*'jscs-app',*/ 'minify-app', 'less-app']);
 
 
 /**

@@ -7,7 +7,7 @@
     "process": false,
     "require": false
   },
-  "camelcase": true,
+  "camelcase": false,
   "bitwise": true,
   "browser": true,
   "curly": true,
@@ -18,9 +18,9 @@
   "latedef": true,
   "newcap": true,
   "noempty": true,
-  "quotmark": true,
+  "quotmark": false,
   "trailing": true,
   "undef": true,
   "unused": "vars",
-  "maxlen": 80
+  "maxlen": 120
 }

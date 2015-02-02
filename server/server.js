@@ -34,14 +34,6 @@ var github = new Github(
   secrets.github.clientSecret
 );
 
-var oauth = require('github-oauth')({
-  githubClient: secrets.github.clientID,
-  githubSecret: secrets.github.clientSecret,
-  baseURL: secrets.github.host,
-  callbackURI: secrets.github.callbackURL,
-  loginURI: '/login',
-  scope: 'user,repo,public_repo'
-});
 
 /**
  * Create Express server.
@@ -51,7 +43,7 @@ var app = express();
 /**
  * Express configuration.
  */
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('github_org', 'MozillaFoundation');
 app.set('github_repo', 'plan');
@@ -99,16 +91,60 @@ app.post('/add', routes.schedule.createPost);
 app.get('/now', routes.schedule.now);
 app.get('/next', routes.schedule.next);
 app.get('/upcoming', routes.schedule.upcoming);
-app.get('/auth/github', oauth.login);
-app.get('/auth/github/callback', function (req, res) {
+app.get('/api/user/:username', function(req, res) {
+  github.getUserInfo(req.params.username, function(err, body) {
+    if (err) res.redirect('/500');
+    res.type('application/json').send(body);
+  });
+});
+
+function oauthCB(req, res, path) {
+  var oauth = require('github-oauth')({
+    githubClient: secrets.github.clientID,
+    githubSecret: secrets.github.clientSecret,
+    baseURL: secrets.github.host,
+    callbackURI: secrets.github.callbackURL + '/' + path,
+    loginURI: '/login',
+    scope: ''
+  });
+  console.log("doing oauthCB wiht a path of:", path)
+  oauth.login(req, res);
+}
+
+app.get('/auth/github/:path', function(req, res) {
+  oauthCB(req, res, req.params.path);
+});
+app.get('/auth/github', function(req, res) {
+  oauthCB(req, res, "");
+});
+
+app.get('/auth/callback/:path', function (req, res) {
+  var oauth = require('github-oauth')({
+    githubClient: secrets.github.clientID,
+    githubSecret: secrets.github.clientSecret,
+    baseURL: secrets.github.host,
+    callbackURI: secrets.github.callbackURL + req.params.path,
+    loginURI: '/login',
+    scope: ''
+  });
   oauth.callback(req, res, function (err, body) {
     if (err) {
       req.flash('errors', {msg: err});
     } else {
+      console.log("GOT CALLBACK, body=", body);
       req.session.token = body.access_token;
-    }
+      // Get User information, and send it in a cookie
+      github.getUserFromToken(body.access_token, function(err, body) {
+        if (!err) {
+          req.session.token = body.access_token;
+          // For some reason, this results in a cookie w/ "j$3A" at the front, which confuses me:
+          //     "github=j%3A%7B%22body%22%3A%7B%22login... ....qTKzGvAWm5ElZZ9PwUtZs4FAyDkOPtno9480FIX1P0A; path=/; expires=Mon, 02 Feb 2015 19:32:02 GMT; httponly"
+          res.cookie('github', body, { maxAge: 900000 });
 
-    res.redirect('/add');
+          res.redirect("/#/"+req.params.path); // Remove this when we move away from # URLs
+        }
+      });
+    }
   });
 });
 app.get('/logout', function (req, res) {

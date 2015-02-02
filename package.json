@@ -16,7 +16,7 @@
     "url": "http://github.com/mozillafoundation/mofo-example-app"
   },
   "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install && gulp build minify-app",
+    "postinstall": "gulp build minify-app",
     "start": "node server.js",
     "build": "gulp"
   },

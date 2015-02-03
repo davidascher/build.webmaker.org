@@ -1,7 +1,7 @@
 var React = require("react");
 var Router = require("react-router");
 var { Route, RouteHandler, Link, DefaultRoute } = Router;
-var { AuthBlock, AuthMixin } = require("./auth.jsx");
+var { AuthBlock, AuthMixin, auth } = require("./auth.jsx");
 var getJSON = require("./getJSON.jsx");
 var MentionsApp = require("./mentions.jsx");
 
@@ -20,7 +20,9 @@ var App = React.createClass({
         <div>
           <ul className="navigation">
             <li className="icon-home"><Link to="/">Home</Link></li>
+            <AuthBlock/>
             <li>&nbsp;</li>
+
             <li className="icon-add"><Link to="add">Add Project</Link></li>
             <li className="icon-now"><Link to="now">This Heartbeat</Link></li>
             <li className="icon-next">
@@ -70,11 +72,11 @@ var App = React.createClass({
 var Add = React.createClass({
   mixins: [AuthMixin],
   render: function() {
-    console.log("in render", this.state);
     var body = (
       <div>
         <a className="button" onClick={this.login}>Login with Github</a>
         <p>To create new projects you need to be logged-in to your Github account.</p>
+        <div className="pagefill"/>
       </div>
     );
     if (this.state.loggedIn) {
@@ -83,47 +85,37 @@ var Add = React.createClass({
           <form method="POST">
             <div className="question">
               <h2>Give your project a title.</h2>
-              <p>In as few words as possible, describe what
-              this project is about.</p>
+              <p>In as few words as possible, describe what this project is about.</p>
               <textarea name="title" rows="2"></textarea>
             </div>
 
             <div className="question">
               <h2>What is the problem you are trying to solve?</h2>
-              <p>Describe what’s broken or missing from the
-              experience of Webmaker.</p>
+              <p>Describe what’s broken or missing from the current experience.</p>
               <textarea name="problem" rows="8"></textarea>
             </div>
 
             <div className="question">
               <h2>Who are the users you are trying to impact?</h2>
-              <p>Describe who is being affected by the problem
-              you have described (visitors, teachers, staff,
-              community).</p>
+              <p>Describe who is being affected by the problem you have described (visitors, teachers, staff, community).</p>
               <textarea name="audience" rows="8"></textarea>
             </div>
 
             <div className="question">
               <h2>What does success look like?</h2>
-              <p>Describe the "state change" that you wish to
-              accomplish. Do you have metrics that we can
-              reference?</p>
+              <p>Describe the "state change" that you wish to accomplish. Do you have metrics that we can reference?</p>
               <textarea name="success" rows="8"></textarea>
             </div>
 
             <div className="question">
               <h2>What is your vision for a solution?</h2>
-              <p>Describe a high level solution to solve the
-              problem. Think about the most important,
-              impactful part of the solution.</p>
+              <p>Describe a high level solution to solve the problem. Think about the most important, impactful part of the solution.</p>
               <textarea name="vision" rows="8"></textarea>
             </div>
 
             <div className="question">
               <h2>How will you measure success?</h2>
-              <p>Describe the data you will use. Is there
-              existing tracking in place? Do you need to
-              setup new reports or dashboards?</p>
+              <p>Describe the data you will use. Is there existing tracking in place? Do you need to setup new reports or dashboards?</p>
               <textarea name="measurement" rows="8"></textarea>
             </div>
             <button className="button" type="submit">Submit Project</button>
@@ -135,7 +127,6 @@ var Add = React.createClass({
       <div>
         <div className="header">
           <h2>New Initiative</h2>
-          <AuthBlock/>
         </div>
         <div className="main">
           {body}
@@ -234,7 +225,6 @@ var Heartbeat = React.createClass({
       <div>
         <div className="header">
           <h2>{this.props.title}</h2>
-          <AuthBlock/>
         </div>
         <div className="main">
           <div id="sprint">
@@ -315,7 +305,6 @@ var Upcoming = React.createClass({
       <div>
         <div className="header">
           <h2>Upcoming</h2>
-          <AuthBlock/>
         </div>
         <div className="main">
             <div id="calendar">
@@ -330,15 +319,21 @@ var Upcoming = React.createClass({
 
 var Dashboard = React.createClass({
   mixins: [AuthMixin],
+  getInitialState: function() {
+    var handle = auth.getCurrentUser();
+    if (!handle) return {};
+    return {
+      handle: handle
+    };
+  },
   render: function() {
     return (
       <div id="dashboard">
         <div className="header">
           <h2>Dashboard for {this.state.details.name}</h2>
-          <AuthBlock/>
         </div>
         <div className="main">
-          <MentionsApp handle="davidascher"/>
+          <MentionsApp handle={this.state.handle}/>
         </div>
       </div>
     );
@@ -410,7 +405,6 @@ var Design = React.createClass({
       <div>
         <div className="header">
           <h2>Design Assets</h2>
-          <AuthBlock/>
         </div>
         <div className="main">
             <div id="assets">
